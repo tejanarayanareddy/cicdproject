@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import './MedicalRecords.css';
 
 const MedicalRecords = () => {
+  // 🔥 Base URL from .env (not used now, but ready for API integration)
+  const BASE_URL = process.env.REACT_APP_BASE_URL;
+
   // Static records data - no need for useEffect/API calls
   const defaultRecords = [
     {
@@ -77,12 +80,10 @@ const MedicalRecords = () => {
   });
 
   const handleDownload = (recordId) => {
-    // Static implementation - just show alert
     alert(`Record ${recordId} would be downloaded as PDF`);
   };
 
   const handleViewDetails = (recordId) => {
-    // Static implementation - just show alert
     alert(`Viewing details for record ${recordId}`);
   };
 
@@ -99,7 +100,6 @@ const MedicalRecords = () => {
     <div className="medical-records-container">
       <div className="records-header">
         <h1>My Medical Records</h1>
-        
       </div>
 
       <div className="records-filter-section">

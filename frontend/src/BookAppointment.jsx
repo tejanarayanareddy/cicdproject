@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Apicall } from './api';
 import './BookAppointment.css';
 
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+
 const Footer = () => (
   <div className="footer">
     <div className="footer-socials">
@@ -42,7 +44,7 @@ class BookAppointment extends Component {
   }
 
   fetchDoctors = () => {
-    Apicall("GET", "http://localhost:8057/doctors/list", "", (res) => {
+    Apicall("GET", `${BASE_URL}/doctors/list`, "", (res) => {
       if (res) {
         try {
           const doctors = JSON.parse(res);
@@ -56,11 +58,12 @@ class BookAppointment extends Component {
 
   getAvailableDoctor = (department) => {
     const { doctors } = this.state;
-    // Make the check case-insensitive and trim whitespace
-    const availableDoctor = doctors.find(doctor => 
+
+    const availableDoctor = doctors.find(doctor =>
       doctor.department && doctor.department.trim().toLowerCase() === department.trim().toLowerCase() &&
       doctor.status && doctor.status.trim().toLowerCase() === 'available'
     );
+
     return availableDoctor;
   };
 
@@ -80,7 +83,6 @@ class BookAppointment extends Component {
       return "Please enter a valid age.";
     }
 
-    // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return "Please enter a valid email address.";
@@ -92,8 +94,8 @@ class BookAppointment extends Component {
   handleDepartmentChange = (e) => {
     const department = e.target.value;
     const availableDoctor = this.getAvailableDoctor(department);
-    
-    this.setState({ 
+
+    this.setState({
       department,
       selectedDoctor: availableDoctor,
       error: availableDoctor ? null : "No doctors available in this department. Please try another department."
@@ -145,7 +147,7 @@ class BookAppointment extends Component {
 
     this.setState({ loading: true, error: null });
 
-    Apicall("POST", "http://localhost:8057/appointments/create", JSON.stringify(appointmentData), (res) => {
+    Apicall("POST", `${BASE_URL}/appointments/create`, JSON.stringify(appointmentData), (res) => {
       this.setState({ loading: false });
 
       if (!res) {
@@ -154,11 +156,10 @@ class BookAppointment extends Component {
       }
 
       try {
-        // First try to parse as JSON
         const response = JSON.parse(res);
-        
+
         if (response.status === "success") {
-          this.setState({ 
+          this.setState({
             success: true,
             fullName: '',
             gender: '',
@@ -173,8 +174,7 @@ class BookAppointment extends Component {
             selectedDoctor: null,
             error: null
           });
-          
-          // Redirect to MyAppointments after 2 seconds
+
           setTimeout(() => {
             window.location.href = '/my-appointments';
           }, 2000);
@@ -182,11 +182,10 @@ class BookAppointment extends Component {
           this.setState({ error: response.message || "Failed to book appointment." });
         }
       } catch (e) {
-        // If JSON parsing fails, try to handle as string response
         if (res.includes("::")) {
           const [status, message] = res.split("::");
           if (status === "200") {
-            this.setState({ 
+            this.setState({
               success: true,
               fullName: '',
               gender: '',
@@ -201,8 +200,7 @@ class BookAppointment extends Component {
               selectedDoctor: null,
               error: null
             });
-            
-            // Redirect to MyAppointments after 2 seconds
+
             setTimeout(() => {
               window.location.href = '/my-appointments';
             }, 2000);
@@ -230,6 +228,7 @@ class BookAppointment extends Component {
           <div className="appointment-image">
             <img src="bookappointment.jpg" alt="Doctor" />
           </div>
+
           <div className="appointment-form-box">
             <form className="appointment-form" onSubmit={this.handleSubmit}>
               <h2>Book Your Appointment</h2>
@@ -265,6 +264,7 @@ class BookAppointment extends Component {
                     required
                   />
                 </div>
+
                 <div className="form-group">
                   <label>Gender *</label>
                   <select
@@ -295,6 +295,7 @@ class BookAppointment extends Component {
                     required
                   />
                 </div>
+
                 <div className="form-group">
                   <label>Department *</label>
                   <select
@@ -325,6 +326,7 @@ class BookAppointment extends Component {
                     required
                   />
                 </div>
+
                 <div className="form-group">
                   <label>Appointment Time *</label>
                   <input
@@ -349,6 +351,7 @@ class BookAppointment extends Component {
                     required
                   />
                 </div>
+
                 <div className="form-group">
                   <label>Phone *</label>
                   <input
@@ -399,8 +402,8 @@ class BookAppointment extends Component {
                 <p>Note: A doctor will be automatically assigned based on department availability.</p>
               </div>
 
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 className="submit-button"
                 disabled={loading || !selectedDoctor}
               >
@@ -409,6 +412,7 @@ class BookAppointment extends Component {
             </form>
           </div>
         </div>
+
         <Footer />
       </div>
     );

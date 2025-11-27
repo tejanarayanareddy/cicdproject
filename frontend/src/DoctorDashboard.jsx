@@ -13,6 +13,9 @@ class DoctorDashboard extends Component {
     this.state = {
       doctorName: 'Dr. John Smith'
     };
+
+    // 🔥 Make base URL available (no logic changed)
+    this.baseURL = process.env.REACT_APP_BASE_URL;
   }
 
   handleViewAppointments = () => {

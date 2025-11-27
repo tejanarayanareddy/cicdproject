@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './PatientDashboard.css'; // Using our new dedicated CSS file
+import './PatientDashboard.css';
 
-// Wrapper to use navigate in class component
+// Wrapper to use navigate inside class component
 function withNavigation(Component) {
   return props => <Component {...props} navigate={useNavigate()} />;
 }
@@ -29,11 +29,13 @@ class PatientDashboard extends Component {
 
   render() {
     const { patientName } = this.state;
+
     return (
       <div className="admin-dashboard-bg">
         <main className="admin-main">
           <h1 className="welcome-title">Welcome, {patientName}</h1>
 
+          {/* Quick Stats Section */}
           <div className="admin-card">
             <div className="card-title">Quick Stats</div>
             <div className="stats-grid">
@@ -60,6 +62,7 @@ class PatientDashboard extends Component {
             </div>
           </div>
 
+          {/* Appointment Section */}
           <div className="admin-card">
             <div className="card-title">Appointments</div>
             <div>Book and manage your appointments.</div>
@@ -73,6 +76,7 @@ class PatientDashboard extends Component {
             </div>
           </div>
 
+          {/* Medical Records Section */}
           <div className="admin-card">
             <div className="card-title">Medical Records</div>
             <div>Access your medical history and records.</div>
@@ -81,23 +85,28 @@ class PatientDashboard extends Component {
             </button>
           </div>
 
+          {/* Health Summary Section */}
           <div className="admin-card">
             <div className="card-title">Health Summary</div>
             <div>Your recent health status and updates.</div>
+
             <div className="health-summary">
               <div className="summary-item">
                 <span className="summary-label">Last Checkup:</span>
                 <span className="summary-value">15 days ago</span>
               </div>
+
               <div className="summary-item">
                 <span className="summary-label">Next Appointment:</span>
                 <span className="summary-value">In 3 days</span>
               </div>
+
               <div className="summary-item">
                 <span className="summary-label">Health Status:</span>
                 <span className="summary-value good">Good</span>
               </div>
             </div>
+
           </div>
         </main>
       </div>

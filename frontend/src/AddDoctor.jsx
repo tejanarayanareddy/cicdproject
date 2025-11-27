@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import './AddDoctor.css';
 import { Apicall } from './api';
 
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+
 const DEPARTMENTS = [
   'General Medicine',
   'Cardiology',
@@ -36,7 +38,7 @@ class AddDoctor extends Component {
 
   fetchDoctors = () => {
     this.setState({ loading: true, error: null });
-    Apicall("GET", "http://localhost:8057/doctors/list", "", (res) => {
+    Apicall("GET", `${BASE_URL}/doctors/list`, "", (res) => {
       this.setState({ loading: false });
       
       if (!res) {
@@ -46,7 +48,6 @@ class AddDoctor extends Component {
         return;
       }
 
-      // Check for 500 error
       if (res.includes("500::")) {
         const [_, message] = res.split("::");
         this.setState({ 
@@ -89,13 +90,11 @@ class AddDoctor extends Component {
       return "Phone number must be 10 digits.";
     }
 
-    // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return "Please enter a valid email address.";
     }
 
-    // Experience validation
     const expNum = parseInt(experience, 10);
     if (isNaN(expNum) || expNum < 0 || expNum > 50) {
       return "Please enter a valid experience in years (0-50).";
@@ -117,7 +116,6 @@ class AddDoctor extends Component {
       specialization, experience, status, address
     } = this.state;
 
-    // Format data to match server's Doctor model
     const doctorData = {
       fullname: fullname.trim(),
       email: email.trim(),
@@ -133,7 +131,7 @@ class AddDoctor extends Component {
 
     this.setState({ loading: true, error: null });
 
-    fetch("http://localhost:8057/doctors/add", {
+    fetch(`${BASE_URL}/doctors/add`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -153,7 +151,6 @@ class AddDoctor extends Component {
       this.setState({ loading: false });
 
       try {
-        // Try to parse as JSON first
         const response = JSON.parse(text);
         if (response.status === "success" || response.message?.toLowerCase().includes("success")) {
           this.setState({
@@ -175,7 +172,6 @@ class AddDoctor extends Component {
           });
         }
       } catch (e) {
-        // If not JSON, check for success message in text
         if (text.toLowerCase().includes("success")) {
           this.setState({
             success: true,
@@ -208,7 +204,7 @@ class AddDoctor extends Component {
 
   deleteDoctor = (id) => {
     if (window.confirm("Are you sure you want to delete this doctor?")) {
-      fetch(`http://localhost:8057/doctors/delete/${id}`, {
+      fetch(`${BASE_URL}/doctors/delete/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -217,7 +213,6 @@ class AddDoctor extends Component {
       })
         .then(response => response.text())
         .then(res => {
-          // Try to parse as JSON first
           try {
             const data = JSON.parse(res);
             if (data.status === "success" || (data.message && data.message.toLowerCase().includes("success"))) {
@@ -227,7 +222,6 @@ class AddDoctor extends Component {
               this.setState({ error: data.message || "Failed to delete doctor." });
             }
           } catch (e) {
-            // If not JSON, check for success in plain text
             if (res.toLowerCase().includes("success") || res.startsWith("200::")) {
               alert("Doctor deleted successfully.");
               this.fetchDoctors();
